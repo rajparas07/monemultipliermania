@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<!-- saved from url=(0091)https://page1.genspark.site/page/toolu_01MfWxLCW3KkjgHPy2w1mVPE/money_multiplier_mania.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Multiplier Mania</title>
+    <link href="./tailwind.min.css" rel="stylesheet">
+    <link href="./all.min.css" rel="stylesheet">
+    <script src="./confetti.browser.min.js.download"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffb6c1, #ffc0cb, #ffb6c1);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        
+        .money-container {
+            position: relative;
+            height: 150px;
+            overflow: hidden;
+        }
+        
+        .floating-money {
+            position: absolute;
+            width: 30px;
+            height: 15px;
+            background: linear-gradient(to right, #85bb65, #adde8c);
+            border: 1px solid #1f5c2b;
+            border-radius: 2px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 8px;
+            color: #1f5c2b;
+            opacity: 0;
+            animation: float-up 3s ease-out forwards;
+        }
+        
+        @keyframes float-up {
+            0% {
+                transform: translateY(150px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-image: url('https://cdn.jsdelivr.net/gh/twbs/icons@main/icons/stars.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0;
+            animation: sparkle 2s ease-out forwards;
+        }
+        
+        @keyframes sparkle {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5) rotate(90deg);
+                opacity: 0;
+            }
+        }
+        
+        .multiply-btn {
+            transition: transform 0.2s;
+        }
+        
+        .multiply-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .multiply-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .money-value {
+            transition: transform 0.3s, color 0.3s;
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); color: #fff; }
+            50% { transform: scale(1.5); color: #ffd700; }
+            100% { transform: scale(1); color: #fff; }
+        }
+        
+        .leaderboard-item {
+            transition: background-color 0.3s;
+        }
+        
+        .leaderboard-item:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+<style>
+    .genspark-badge-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .genspark-modal {
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      z-index: 10000;
+      justify-content: end;
+    }
+    
+    .genspark-modal-content {
+      background-color: white;
+      border-radius: 8px;
+      max-width: 450px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 20px;
+      position: relative;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+    }
+    @media (max-width: 768px) {
+      .genspark-modal-content {
+        max-width: 90%;
+      }
+    }
+    
+    .genspark-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    
+    .genspark-title {
+      margin-bottom: 8px;
+      font-weight: normal;
+      display: inline;
+      font-size: 14px;
+    }
+    
+    .genspark-report {
+      color: #909499;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-bottom: 14px;
+      display: inline;
+    }
+    
+    .genspark-info {
+      margin: 25px 0;
+      color: #333;
+      font-size: 14px;
+    }
+    
+    .genspark-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .genspark-remove-btn {
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      color: #333;
+      padding: 4px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      flex: 1;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    
+    .genspark-go-btn {
+      background-color: #222;
+      border: none;
+      color: white;
+      padding: 4px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      flex: 1;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+  </style></head>
+<body class="min-h-screen p-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Disclaimer Banner -->
+        <div class="bg-yellow-200 border-2 border-yellow-500 rounded-lg p-3 mb-6 text-center shadow-lg">
+            <p class="text-yellow-800 font-bold">⚠️ FOR ENTERTAINMENT ONLY! No real money involved! ⚠️</p>
+        </div>
+        
+        <!-- Main Game Container -->
+        <div class="bg-white bg-opacity-70 rounded-2xl shadow-2xl p-6">
+            <h1 class="text-4xl md:text-5xl font-bold text-center text-pink-600 mb-6">
+                <i class="fas fa-coins text-yellow-400 mr-2"></i>Money Multiplier Mania<i class="fas fa-coins text-yellow-400 ml-2"></i>
+            </h1>
+            
+            <!-- Game Controls -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Selection Controls -->
+                <div class="flex flex-col space-y-4 p-4 bg-pink-100 rounded-xl shadow-md">
+                    <div>
+                        <label for="country" class="block text-lg font-bold text-pink-700 mb-2">Select Country:</label>
+                        <select id="country" class="w-full p-3 rounded-lg bg-pink-50 border-2 border-pink-300 focus:border-pink-500 focus:ring focus:ring-pink-200 focus:ring-opacity-50 text-pink-800">
+                            <option value="usa">United States</option>
+                            <option value="eu">European Union</option>
+                            <option value="uk">United Kingdom</option>
+                            <option value="japan">Japan</option>
+                            <option value="canada">Canada</option>
+                            <option value="australia">Australia</option>
+                            <option value="china">China</option>
+                            <option value="india">India</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="currency" class="block text-lg font-bold text-pink-700 mb-2">Select Currency:</label>
+                        <select id="currency" class="w-full p-3 rounded-lg bg-pink-50 border-2 border-pink-300 focus:border-pink-500 focus:ring focus:ring-pink-200 focus:ring-opacity-50 text-pink-800">
+                            <option value="USD">US Dollar ($)</option>
+                            <option value="EUR">Euro (€)</option>
+                            <option value="GBP">British Pound (£)</option>
+                            <option value="JPY">Japanese Yen (¥)</option>
+                            <option value="CAD">Canadian Dollar (C$)</option>
+                            <option value="AUD">Australian Dollar (A$)</option>
+                            <option value="CNY">Chinese Yuan (¥)</option>
+                            <option value="INR">Indian Rupee (₹)</option>
+                        </select>
+                    </div>
+                    
+                    <button id="startGameBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition hover:-translate-y-1 hover:scale-105 opacity-50 cursor-not-allowed" disabled="">
+                        Start Game <i class="fas fa-play-circle ml-2"></i>
+                    </button>
+                </div>
+                
+                <!-- Game Info -->
+                <div class="p-4 bg-pink-100 rounded-xl shadow-md flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-pink-700 mb-3">How to Play:</h3>
+                        <ul class="list-disc list-inside space-y-2 text-pink-800">
+                            <li>Select your country and currency</li>
+                            <li>Click the "Multiply!" button to increase your money</li>
+                            <li>Each click gives a random multiplier</li>
+                            <li>Try to reach the top of the leaderboard!</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <p class="text-pink-700 font-semibold">Game Stats:</p>
+                        <p id="clickCount" class="text-pink-800">Clicks: 0</p>
+                        <p id="multiplierLog" class="text-pink-800">Last boost: None</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Game Area (Initially Hidden) -->
+            <div id="gameArea" class="">
+                <div class="money-container bg-gradient-to-r from-pink-200 to-purple-200 rounded-xl p-6 flex flex-col items-center justify-center mb-6 relative overflow-hidden">
+                    <div class="text-center">
+                        <h2 class="text-lg font-bold text-pink-700 mb-2">Your Fake Money:</h2>
+                        <div class="flex items-center justify-center">
+                            <span id="currencySymbol" class="text-2xl mr-2">₹</span>
+                            <span id="moneyValue" class="money-value text-5xl font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-2 rounded-lg shadow-inner">100</span>
+                        </div>
+                    </div>
+                    
+                    <button id="multiplyBtn" class="multiply-btn bg-gradient-to-r from-yellow-400 to-red-500 hover:from-yellow-500 hover:to-red-600 text-white font-bold text-xl py-4 px-8 rounded-full shadow-lg mt-6 animate-bounce">
+                        <i class="fas fa-magic mr-2"></i>MULTIPLY!<i class="fas fa-magic ml-2"></i>
+                    </button>
+                </div>
+                
+                <!-- Controls and Info -->
+                <div class="flex flex-wrap justify-between items-center mb-8">
+                    <button id="resetBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow">
+                        <i class="fas fa-redo mr-1"></i> Reset Game
+                    </button>
+                    
+                    <div class="flex items-center space-x-4">
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="soundToggle" class="sr-only peer" checked="">
+                            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[&#39;&#39;] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+                            <span class="ml-2 text-pink-800 font-medium">Sounds</span>
+                        </label>
+                        
+                        <button id="helpBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow">
+                            <i class="fas fa-question-circle mr-1"></i> Help
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Leaderboard -->
+                <div class="bg-gradient-to-r from-purple-200 to-pink-200 rounded-xl p-4 shadow-lg">
+                    <h3 class="text-2xl font-bold text-center text-pink-700 mb-4">
+                        <i class="fas fa-trophy text-yellow-500 mr-2"></i>Leaderboard
+                    </h3>
+                    
+                    <div class="bg-white bg-opacity-50 rounded-lg p-3">
+                        <ul id="leaderboard" class="space-y-2">
+                            <li class="leaderboard-item p-2 rounded-lg bg-yellow-100 flex justify-between">
+                                <span><i class="fas fa-crown text-yellow-500 mr-2"></i>Money Mogul</span>
+                                <span>$9,999,999</span>
+                            </li>
+                            <li class="leaderboard-item p-2 rounded-lg bg-gray-200 flex justify-between">
+                                <span><i class="fas fa-medal text-gray-500 mr-2"></i>Cash Commander</span>
+                                <span>$5,000,000</span>
+                            </li>
+                            <li class="leaderboard-item p-2 rounded-lg bg-yellow-50 flex justify-between">
+                                <span><i class="fas fa-award text-yellow-700 mr-2"></i>Wealth Wizard</span>
+                                <span>$1,000,000</span>
+                            </li>
+                            <li class="leaderboard-item p-2 rounded-lg flex justify-between">
+                                <span>Penny Pincher</span>
+                                <span>$500,000</span>
+                            </li>
+                            <li class="leaderboard-item p-2 rounded-lg flex justify-between">
+                                <span>Budget Buddy</span>
+                                <span>$100,000</span>
+                            </li><li class="leaderboard-item p-2 rounded-lg bg-pink-100 flex justify-between" id="playerScore">
+                <span><i class="fas fa-user text-pink-500 mr-2"></i>You</span>
+                <span>₹100</span>
+            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Help Modal (Initially Hidden) -->
+            <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                <div class="bg-white rounded-xl p-6 max-w-lg mx-4">
+                    <h3 class="text-2xl font-bold text-pink-600 mb-4">How to Play Money Multiplier Mania</h3>
+                    <ol class="list-decimal list-inside space-y-2 mb-4 text-gray-700">
+                        <li>Select your country and currency from the dropdown menus</li>
+                        <li>Click the "Start Game" button to begin</li>
+                        <li>Click the "MULTIPLY!" button to increase your money amount</li>
+                        <li>Each click gives you a random multiplier between x1.1 and x5</li>
+                        <li>Special boosts sometimes give even bigger multipliers!</li>
+                        <li>Try to reach the top of the leaderboard with the most money</li>
+                        <li>Use the Reset button to start over</li>
+                    </ol>
+                    <p class="text-red-500 font-bold mb-4">REMEMBER: This is just a fun game! No real money is involved!</p>
+                    <button id="closeHelpBtn" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg shadow w-full">
+                        Got it!
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="mt-8 text-center text-pink-800">
+            <p class="font-bold">Money Multiplier Mania - A Game of Fantasy Finance</p>
+            <p class="text-sm mt-1">© 2023 Just For Fun Industries - No real money ever changes hands!</p>
+        </div>
+    </div>
+    
+    <script>
+        // Audio resources
+        const sounds = {
+            click: new Audio('https://cdn.jsdelivr.net/gh/themaximal1st/free-web-sounds@main/UISounds/click.mp3'),
+            success: new Audio('https://cdn.jsdelivr.net/gh/themaximal1st/free-web-sounds@main/UISounds/success.mp3'),
+            moneySound: new Audio('https://cdn.jsdelivr.net/gh/themaximal1st/free-web-sounds@main/UISounds/coin.mp3')
+        };
+        
+        // Game Variables
+        let moneyValue = 100;
+        let clickCount = 0;
+        let currencySymbols = {
+            USD: '$',
+            EUR: '€',
+            GBP: '£',
+            JPY: '¥',
+            CAD: 'C$',
+            AUD: 'A$',
+            CNY: '¥',
+            INR: '₹'
+        };
+        
+        // DOM Elements
+        const gameArea = document.getElementById('gameArea');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const multiplyBtn = document.getElementById('multiplyBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const helpBtn = document.getElementById('helpBtn');
+        const closeHelpBtn = document.getElementById('closeHelpBtn');
+        const helpModal = document.getElementById('helpModal');
+        const soundToggle = document.getElementById('soundToggle');
+        const moneyValueEl = document.getElementById('moneyValue');
+        const currencySymbolEl = document.getElementById('currencySymbol');
+        const currencySelect = document.getElementById('currency');
+        const clickCountEl = document.getElementById('clickCount');
+        const multiplierLogEl = document.getElementById('multiplierLog');
+        const moneyContainer = document.querySelector('.money-container');
+        
+        // Event Listeners
+        startGameBtn.addEventListener('click', startGame);
+        multiplyBtn.addEventListener('click', multiplyMoney);
+        resetBtn.addEventListener('click', resetGame);
+        helpBtn.addEventListener('click', showHelp);
+        closeHelpBtn.addEventListener('click', hideHelp);
+        currencySelect.addEventListener('change', updateCurrencySymbol);
+        
+        // Initialize game
+        updateCurrencySymbol();
+        
+        // Functions
+        function startGame() {
+            if (soundToggle.checked) {
+                sounds.click.play();
+            }
+            gameArea.classList.remove('hidden');
+            startGameBtn.disabled = true;
+            startGameBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            // Add player to leaderboard
+            addPlayerToLeaderboard();
+            
+            // Scroll to game area
+            gameArea.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function updateCurrencySymbol() {
+            const selectedCurrency = currencySelect.value;
+            currencySymbolEl.textContent = currencySymbols[selectedCurrency];
+        }
+        
+        function multiplyMoney() {
+            if (soundToggle.checked) {
+                sounds.click.play();
+            }
+            
+            clickCount++;
+            clickCountEl.textContent = `Clicks: ${clickCount}`;
+            
+            // Random multiplier between 1.1 and 5
+            let multiplier = 1 + Math.random() * 4;
+            
+            // Chance for special multiplier boost (10% chance)
+            if (Math.random() < 0.1) {
+                multiplier = 5 + Math.random() * 10;
+                if (soundToggle.checked) {
+                    sounds.success.play();
+                }
+                multiplierLogEl.innerHTML = `Last boost: <span class="text-green-600 font-bold">SUPER BOOST x${multiplier.toFixed(2)}!</span>`;
+            } else {
+                multiplierLogEl.textContent = `Last boost: x${multiplier.toFixed(2)}`;
+            }
+            
+            // Update money value
+            const oldValue = moneyValue;
+            moneyValue = Math.floor(moneyValue * multiplier);
+            moneyValueEl.textContent = formatMoney(moneyValue);
+            
+            // Add visual effects
+            createMoneyAnimation();
+            createSparkleEffect();
+            pulseEffect(moneyValueEl);
+            
+            // Trigger confetti on big multipliers
+            if (multiplier > 3) {
+                triggerConfetti();
+            }
+            
+            // Update leaderboard
+            updateLeaderboard();
+        }
+        
+        function formatMoney(amount) {
+            return amount.toLocaleString();
+        }
+        
+        function resetGame() {
+            if (soundToggle.checked) {
+                sounds.click.play();
+            }
+            
+            moneyValue = 100;
+            clickCount = 0;
+            moneyValueEl.textContent = '100';
+            clickCountEl.textContent = 'Clicks: 0';
+            multiplierLogEl.textContent = 'Last boost: None';
+            updateLeaderboard();
+        }
+        
+        function showHelp() {
+            if (soundToggle.checked) {
+                sounds.click.play();
+            }
+            helpModal.classList.remove('hidden');
+        }
+        
+        function hideHelp() {
+            if (soundToggle.checked) {
+                sounds.click.play();
+            }
+            helpModal.classList.add('hidden');
+        }
+        
+        function createMoneyAnimation() {
+            if (soundToggle.checked) {
+                sounds.moneySound.currentTime = 0;
+                sounds.moneySound.play();
+            }
+            
+            // Create 5-15 floating money bills
+            const numberOfBills = 5 + Math.floor(Math.random() * 10);
+            for (let i = 0; i < numberOfBills; i++) {
+                const bill = document.createElement('div');
+                bill.className = 'floating-money';
+                bill.textContent = currencySymbolEl.textContent;
+                
+                // Random position and delay
+                const leftPos = Math.random() * 100;
+                const delay = Math.random() * 0.5;
+                
+                bill.style.left = `${leftPos}%`;
+                bill.style.animationDelay = `${delay}s`;
+                
+                moneyContainer.appendChild(bill);
+                
+                // Remove bill after animation
+                setTimeout(() => {
+                    bill.remove();
+                }, 3000 + (delay * 1000));
+            }
+        }
+        
+        function createSparkleEffect() {
+            // Create 3-8 sparkles
+            const numberOfSparkles = 3 + Math.floor(Math.random() * 5);
+            for (let i = 0; i < numberOfSparkles; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                
+                // Random position and delay
+                const leftPos = 20 + Math.random() * 60;
+                const topPos = 20 + Math.random() * 60;
+                const delay = Math.random() * 0.3;
+                
+                sparkle.style.left = `${leftPos}%`;
+                sparkle.style.top = `${topPos}%`;
+                sparkle.style.animationDelay = `${delay}s`;
+                
+                moneyContainer.appendChild(sparkle);
+                
+                // Remove sparkle after animation
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 2000 + (delay * 1000));
+            }
+        }
+        
+        function pulseEffect(element) {
+            element.classList.add('pulse');
+            setTimeout(() => {
+                element.classList.remove('pulse');
+            }, 500);
+        }
+        
+        function triggerConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+        
+        function addPlayerToLeaderboard() {
+            const leaderboard = document.getElementById('leaderboard');
+            const playerItem = document.createElement('li');
+            playerItem.className = 'leaderboard-item p-2 rounded-lg bg-pink-100 flex justify-between';
+            playerItem.id = 'playerScore';
+            playerItem.innerHTML = `
+                <span><i class="fas fa-user text-pink-500 mr-2"></i>You</span>
+                <span>${currencySymbolEl.textContent}${formatMoney(moneyValue)}</span>
+            `;
+            leaderboard.appendChild(playerItem);
+        }
+        
+        function updateLeaderboard() {
+            const playerScore = document.getElementById('playerScore');
+            if (playerScore) {
+                playerScore.querySelector('span:last-child').textContent = `${currencySymbolEl.textContent}${formatMoney(moneyValue)}`;
+                
+                // Sort the leaderboard
+                const leaderboard = document.getElementById('leaderboard');
+                const items = Array.from(leaderboard.children);
+                
+                // Move player based on score
+                let playerIndex = items.indexOf(playerScore);
+                for (let i = 0; i < items.length; i++) {
+                    if (i === playerIndex) continue;
+                    
+                    const scoreText = items[i].querySelector('span:last-child').textContent;
+                    const score = parseInt(scoreText.replace(/[^0-9]/g, ''));
+                    
+                    if (moneyValue > score && i < playerIndex) {
+                        leaderboard.insertBefore(playerScore, items[i]);
+                        break;
+                    } else if (moneyValue < score && i > playerIndex) {
+                        leaderboard.insertBefore(playerScore, items[i].nextSibling);
+                        break;
+                    }
+                }
+                
+                // Highlight player position
+                playerScore.classList.add('bg-pink-100');
+                if (playerIndex === 0) {
+                    triggerConfetti();
+                    if (soundToggle.checked) {
+                        sounds.success.play();
+                    }
+                }
+            }
+        }
+        
+        // Listen for sound toggle changes
+        soundToggle.addEventListener('change', () => {
+            // No need to do anything else, the checked state will be used when playing sounds
+        });
+        
+        // Close help modal when clicking outside
+        window.addEventListener('click', (event) => {
+            if (event.target === helpModal) {
+                hideHelp();
+            }
+        });
+    </script>
+
+
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDlHGY4pAvkXKYCB5Cv4eVj3ZCVf%2BL7vkQ%2Fai5sROoximRAQaTvK%2FLkLEu4vIFgZhCbbX3lrUbJcopOMbOh3nStHBLeGNPIoLV3Q4%2BH9L6aDVEuBawbyYzBFHLyn0Sb3m7jZA3473EjmylLxl70BdrQAOaTIETG0a6t0jHHyfirvHGTH%2FBwyH%2F6TEewmGKrbz0W0Unk2UB3WWnj6k8QAS1kJ91qa%2FXXBUvnywpRN%2BhULuwYwi75TljANoGcBveDsPGzVFOyh0BXqRHwKzXOAjgCvvdp46PwjpKCKLZFg4aJTlGhsh1chDDnCTY%2F8U4mGNH%2BaZ%2Fr8SNz45Tfec4UG3fLjosjoV7YNI8j2hj%2FHwKoF5qFUFRJK5rNwg8hZLkXzroajTh%2BQ4A%2FztEg2zk6JqmrVzBgZMnEsy%2BI03lmDTqS6%2BGAPCnM7LCkF1l3OVq%2Fo0l2qyxaQwxUbfHGb%2B6tC3YqAFdMRgcLlwAg34jhE9a9Ygvxug51%2F1L4R0KdEZSmjSBCMhApmNvorDQ2mPSL%2Fr3G5r5%2Ba%2FY4V%2B6yabP9MYSYcPus6ZF7Q5nRwrnd2byUrHQed89ggvK2zg4r%2BT7N8MVbY%3D";
+        window.__genspark_locale = "en-US";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDlHGY4pAvkXKYCB5Cv4eVj3ZCVf+L7vkQ/ai5sROoximRAQaTvK/LkLEu4vIFgZhCbbX3lrUbJcopOMbOh3nStHBLeGNPIoLV3Q4+H9L6aDVEuBawbyYzBFHLyn0Sb3m7jZA3473EjmylLxl70BdrQAOaTIETG0a6t0jHHyfirvHGTH/BwyH/6TEewmGKrbz0W0Unk2UB3WWnj6k8QAS1kJ91qa/XXBUvnywpRN+hULuwYwi75TljANoGcBveDsPGzVFOyh0BXqRHwKzXOAjgCvvdp46PwjpKCKLZFg4aJTlGhsh1chDDnCTY/8U4mGNH+aZ/r8SNz45Tfec4UG3fLjosjoV7YNI8j2hj/HwKoF5qFUFRJK5rNwg8hZLkXzroajTh+Q4A/ztEg2zk6JqmrVzBgZMnEsy+I03lmDTqS6+GAPCnM7LCkF1l3OVq/o0l2qyxaQwxUbfHGb+6tC3YqAFdMRgcLlwAg34jhE9a9Ygvxug51/1L4R0KdEZSmjSBCMhApmNvorDQ2mPSL/r3G5r5+a/Y4V+6yabP9MYSYcPus6ZF7Q5nRwrnd2byUrHQed89ggvK2zg4r+T7N8MVbY=";
+    </script>
+    
+        <script id="html_badge_script2" src="./html_badge.js.download"></script>
+        </body></html>
